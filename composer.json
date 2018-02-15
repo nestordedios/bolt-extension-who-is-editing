@@ -1,0 +1,31 @@
+{
+    "name": "twokings/bolt-editors-track-extension",
+    "description": "",
+    "type": "bolt-extension",
+    "keywords": [
+    ],
+    "require": {
+        "bolt/bolt": "^3.0"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^4.7"
+    },
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Néstor de Dios Fernández",
+            "email": "nestor@twokings.nl"
+        }
+    ],
+    "minimum-stability": "dev",
+    "prefer-stable": true,
+    "autoload": {
+        "psr-4": {
+            "Bolt\\Extension\\TwoKings\\EditorsTrack\\": "src"
+        }
+    },
+    "extra": {
+        "bolt-assets": "web",
+        "bolt-class": "Bolt\\Extension\\TwoKings\\EditorsTrack\\EditorsTrackExtension"
+    }
+}

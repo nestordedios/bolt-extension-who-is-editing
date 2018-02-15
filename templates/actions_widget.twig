@@ -1,0 +1,14 @@
+{% for action in actions %}
+  <div class="alert {{ actionsmetadata[action.performed_action].class }}" role="alert">
+    {{ action.displayname }} {{ actionsmetadata[action.performed_action].text  }} this record
+  </div>
+{% endfor %}
+
+<script>
+  var editorstrackdata = {
+    recordID: '{{ actions|first()['performed_on_record_id'] }}',
+    contenttype: '{{ actions|first()['performed_on_contenttype'] }}',
+    userID: '{{ user.id }}',
+  }
+</script>
+
