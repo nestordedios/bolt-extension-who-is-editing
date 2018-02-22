@@ -12,7 +12,7 @@ $(document).ready(function(){
         updateWidget('editcontent');
     });
 
-    function updateWidget(action = null){
+    function updateWidget(action = 'editcontent'){
 
         var url = $('.actions-container').attr('data-actions-url');
 
