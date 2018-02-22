@@ -1,8 +1,14 @@
 {
     "name": "twokings/bolt-extension-who-is-editing",
-    "description": "",
+    "description": "This extension shows you who is editing the content you might want to simultaneously edit",
     "type": "bolt-extension",
     "keywords": [
+        "record",
+        "edit",
+        "editing",
+        "editor",
+        "content",
+        "simultaneously"
     ],
     "require": {
         "bolt/bolt": "^3.0"
