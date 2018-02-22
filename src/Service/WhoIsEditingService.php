@@ -1,6 +1,6 @@
 <?php
 
-namespace Bolt\Extension\TwoKings\EditorsTrack\Service;
+namespace Bolt\Extension\TwoKings\WhoIsEditing\Service;
 
 use Bolt\Application;
 use Bolt\Users;
@@ -9,13 +9,21 @@ use Symfony\Component\HttpFoundation\Request;
 /**
  * Service class that handles CRUD functions
  *
+ * @todo: Logic for adding widget when editing config files
+ *
  * @author Néstor de Dios Fernández <nestor@twokings.nl>
  */
 
-class EditorsTrackService {
+class WhoIsEditingService {
 
+    /**
+     * @var Doctrine\DBAL\Connection
+     */
     private $database;
 
+    /**
+     * @var array
+     */
     private $actionsMetaData = [
         'editcontent' => ['text' => 'is editing', 'class' => 'alert-warning'],
         'update'      => ['text' => 'updated',    'class' => 'alert-success'],
@@ -23,16 +31,21 @@ class EditorsTrackService {
         'delete'      => ['text' => 'deleted',    'class' => 'alert-danger'],
     ];
 
+
     function __construct($database)
     {
         $this->database = $database;
     }
 
     /**
-    * @param Symfony\Component\HttpFoundation\Request   $request
-    * @param string                                     $contenttype The slug of the contenttype
-    * @param int                                        $contenid    The id of the record
-    * @param int                                        $user_id     The id of the current user viewing the record
+    * Fetch the actions from database
+    *
+    * @param \Request $request     The Request object
+    * @param string   $contenttype The slug of the contenttype
+    * @param int      $contenid    The id of the record
+    * @param int      $user_id     The id of the current user viewing the record
+    *
+    * @return array The array of actions
     */
     public function fetchActions($request, $contenttype, $contentid, $user_id)
     {
@@ -51,10 +64,10 @@ class EditorsTrackService {
 
         }
         elseif ($request->get('_route') == 'fileedit') {
-            // TODO: Implementation when editing config files
+
         }
 
-        $actionsSelectSQL = "SELECT user.displayname, action.action, action.contenttype, action.record_id FROM bolt_users user, bolt_extension_editors_track_actions action";
+        $actionsSelectSQL = "SELECT user.displayname, action.action, action.contenttype, action.record_id FROM bolt_users user, bolt_extension_who_is_editing action";
         $actionsSelectSQL .= " WHERE action.user_id = user.id";
         $actionsSelectSQL .= " AND action.record_id = :record_id";
         $actionsSelectSQL .= " AND action.contenttype = :contenttype";
@@ -73,7 +86,13 @@ class EditorsTrackService {
     }
 
     /**
+     * Check if an Action record exist in the database
      *
+     * @param string $contenttype The slug of the contenttype
+     * @param int    $contenid    The id of the record
+     * @param int    $user_id     The id of the current user viewing the record
+     *
+     * @return boolean
      */
     public function exist($contenttype, $contentid, $user_id)
     {
@@ -81,7 +100,7 @@ class EditorsTrackService {
 
         $selectQueryBuilder
             ->select('*')
-            ->from('bolt_extension_editors_track_actions')
+            ->from('bolt_extension_who_is_editing')
             ->where('user_id = :user_id', 'contenttype = :contenttype', 'record_id = :record_id')
             ->setParameter('user_id', $user_id)
             ->setParameter('contenttype', $contenttype)
@@ -99,12 +118,18 @@ class EditorsTrackService {
     }
 
     /**
+     * Insert a new Action record in the database
      *
+     * @param string $contenttype The slug of the contenttype
+     * @param int    $contenid    The id of the record
+     * @param int    $user_id     The id of the current user viewing the record
+     *
+     * @return void
      */
     public function insert($contenttype, $contentid, $user_id)
     {
         $this->database
-            ->insert('bolt_extension_editors_track_actions', [
+            ->insert('bolt_extension_who_is_editing', [
                 'user_id' => $user_id,
                 'contenttype' => $contenttype,
                 'record_id' => $contentid,
@@ -115,13 +140,20 @@ class EditorsTrackService {
     }
 
     /**
+     * Modify an Action record in the database
      *
+     * @param string $contenttype The slug of the contenttype
+     * @param int    $contenid    The id of the record
+     * @param int    $user_id     The id of the current user viewing the record
+     * @param string $action      The action performed
+     *
+     * @return void
      */
     public function update($contenttype, $contentid, $user_id, $action = 'editcontent')
     {
         $updateQueryBuilder = $this->database->createQueryBuilder();
         $updateQueryBuilder
-            ->update('bolt_extension_editors_track_actions')
+            ->update('bolt_extension_who_is_editing')
             ->set('action', ':action')
             ->set('date', ':date')
             ->where('user_id = :user_id', 'contenttype = :contenttype', 'record_id = :record_id')
@@ -135,7 +167,9 @@ class EditorsTrackService {
     }
 
     /**
-     * Returns actions metadata.
+     * Get the actions metadata.
+     *
+     * @return array
      */
     public function getActionsMetaData()
     {

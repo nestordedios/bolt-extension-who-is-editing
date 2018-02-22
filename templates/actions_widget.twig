@@ -1,4 +1,4 @@
-<div class="actions-container" data-actions-url="{{ path('editorstrack.actions') }}">
+<div class="actions-container" data-actions-url="{{ path('whoisediting.actions') }}">
   {% for action in actions %}
     <div class="alert {{ actionsmetadata[action.action].class }}" role="alert">
       {{ action.displayname }} {{ actionsmetadata[action.action].text  }} this record
@@ -7,7 +7,7 @@
 </div>
 
 <script>
-  var editorstrackdata = {
+  var whoiseditingdata = {
     recordID: '{{ actions|first()['record_id'] }}',
     contenttype: '{{ actions|first()['contenttype'] }}',
     userID: '{{ user.id }}',

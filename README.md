@@ -1,2 +1,2 @@
-Bolt Extension Editors Track
+Who Is Editing Bolt Extension
 ======================

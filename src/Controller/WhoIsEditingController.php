@@ -1,6 +1,6 @@
 <?php
 
-namespace Bolt\Extension\TwoKings\EditorsTrack\Controller;
+namespace Bolt\Extension\TwoKings\WhoIsEditing\Controller;
 
 use Bolt\Controller\Base;
 use Silex\Application;
@@ -14,7 +14,7 @@ use Symfony\Component\HttpFoundation\Response;
  * @author Néstor de Dios Fernández <nestor@twokings.nl>
  */
 
-class EditorsTrackController extends Base
+class WhoIsEditingController extends Base
 {
 
     /**
@@ -24,12 +24,20 @@ class EditorsTrackController extends Base
     {
         $ctr
             ->get('/editorsActions', [$this, 'getEditorsActions'])
-            ->bind('editorstrack.actions')
+            ->bind('whoisediting.actions')
         ;
 
         return $ctr;
     }
 
+    /**
+     * The callback function to render the widget template.
+     *
+     * @param Application $app
+     * @param Request $request
+     *
+     * @return \Response
+     */
     public function getEditorsActions(Application $app, Request $request)
     {
         $user = $app['users']->getCurrentUser();
@@ -44,13 +52,13 @@ class EditorsTrackController extends Base
             $action = 'editcontent';
         }
 
-        $app['editorstrack.service']->update($request->query->get('contenttype'), $request->query->get('recordID'), $user['id'], $action);
+        $app['whoisediting.service']->update($request->query->get('contenttype'), $request->query->get('recordID'), $user['id'], $action);
 
-        $actions = $app['editorstrack.service']->fetchActions($request, $request->query->get('contenttype'), $request->query->get('recordID'), $user['id']);
+        $actions = $app['whoisediting.service']->fetchActions($request, $request->query->get('contenttype'), $request->query->get('recordID'), $user['id']);
 
-        return $this->render('@editorstrack/actions_widget.twig', [
+        return $this->render('@whoisediting/actions_widget.twig', [
             'actions' => $actions,
-            'actionsmetadata' => $app['editorstrack.service']->getActionsMetaData(),
+            'actionsmetadata' => $app['whoisediting.service']->getActionsMetaData(),
         ], []);
 
     }

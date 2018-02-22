@@ -20,17 +20,17 @@ $(document).ready(function(){
             url: url,
             method: "GET",
             data: {
-                // editorstrackdata array is populated in actions_widget.twig
-                recordID: editorstrackdata["recordID"],
-                contenttype: editorstrackdata["contenttype"],
-                userID: editorstrackdata["userID"],
+                // whoiseditingdata array is populated in actions_widget.twig
+                recordID: whoiseditingdata["recordID"],
+                contenttype: whoiseditingdata["contenttype"],
+                userID: whoiseditingdata["userID"],
                 action: action,
             },
             dataType: "html"
         });
 
         request.done(function( msg ) {
-            var widgetContainer = $(".widget-editors-actions-widget");
+            var widgetContainer = $(".widget-who-is-editing-widget");
 
             widgetContainer.empty();
 

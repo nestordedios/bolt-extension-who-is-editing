@@ -1,12 +1,11 @@
 <?php
 
-namespace Bolt\Extension\TwoKings\EditorsTrack\Storage\Schema\Table;
+namespace Bolt\Extension\TwoKings\WhoIsEditing\Storage\Schema\Table;
 
 use Bolt\Storage\Database\Schema\Table\BaseTable;
 
 /**
- * ActionsTable class will create the table to store
- * editors actions.
+ * ActionsTable class creates the table 'bolt_extension_who_is_editing'
  *
  * @author Néstor de Dios Fernández <nestor@twokings.nl>
  */
@@ -26,6 +25,9 @@ class ActionsTable extends BaseTable
         $this->table->addColumn('date', 'datetime', []);
     }
 
+    /**
+     * {@inheritdoc}
+     */
     protected function addIndexes()
     {
         $this->table->addIndex(['user_id']);

@@ -1,5 +1,5 @@
 {
-    "name": "twokings/bolt-editors-track-extension",
+    "name": "twokings/bolt-extension-who-is-editing",
     "description": "",
     "type": "bolt-extension",
     "keywords": [
@@ -21,11 +21,11 @@
     "prefer-stable": true,
     "autoload": {
         "psr-4": {
-            "Bolt\\Extension\\TwoKings\\EditorsTrack\\": "src"
+            "Bolt\\Extension\\TwoKings\\WhoIsEditing\\": "src"
         }
     },
     "extra": {
         "bolt-assets": "web",
-        "bolt-class": "Bolt\\Extension\\TwoKings\\EditorsTrack\\EditorsTrackExtension"
+        "bolt-class": "Bolt\\Extension\\TwoKings\\WhoIsEditing\\WhoIsEditingExtension"
     }
 }

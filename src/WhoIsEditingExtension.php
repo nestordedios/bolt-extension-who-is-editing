@@ -1,19 +1,17 @@
 <?php
 
-namespace Bolt\Extension\TwoKings\EditorsTrack;
+namespace Bolt\Extension\TwoKings\WhoIsEditing;
 
+use Bolt\Asset\File\JavaScript;
 use Bolt\Asset\Target;
-use Bolt\Asset\Widget\Queue;
 use Bolt\Asset\Widget\Widget;
 use Bolt\Controller\Zone;
 use Bolt\Events\StorageEvent;
 use Bolt\Events\StorageEvents;
 use Bolt\Extension\DatabaseSchemaTrait;
 use Bolt\Extension\SimpleExtension;
-use Bolt\Extension\TwoKings\EditorsTrack\Controller\EditorsTrackController;
-use Bolt\Extension\TwoKings\EditorsTrack\Service\EditorsTrackService;
-use Bolt\Extension\TwoKings\EditorsTrack\Storage;
-use Bolt\Storage\Entity\Content;
+use Bolt\Extension\TwoKings\WhoIsEditing\Controller\WhoIsEditingController;
+use Bolt\Extension\TwoKings\WhoIsEditing\Service\WhoIsEditingService;
 use Silex\Application;
 use Silex\ControllerCollection;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -21,38 +19,37 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
- * EditorsTrack extension class.
+ * WhoIsEditing extension class.
  *
  * @author Néstor de Dios Fernández <nestor@twokings.nl>
  */
-class EditorsTrackExtension extends SimpleExtension
+class WhoIsEditingExtension extends SimpleExtension
 {
     use DatabaseSchemaTrait;
 
     /**
+     * @todo Add a new widget to be displayed on edit config file pages
+     *
      * {@inheritdoc}
      */
     protected function registerAssets()
     {
+        $asset = JavaScript::create()
+            ->setFileName('who-is-editing.js')
+            ->setLate(true)
+            ->setZone(Zone::BACKEND)
+        ;
+
         $widget1 = Widget::create()
             ->setZone(Zone::BACKEND)
             ->setLocation(Target::WIDGET_BACK_EDITCONTENT_ASIDE_TOP)
             ->setCallback([$this, 'outputActionsWidget'])
-            ->setClass('editors-actions-widget')
+            ->setClass('who-is-editing-widget')
             ->setDefer(false)
         ;
 
-        // $widget2 = Widget::create()
-        //     ->setZone(Zone::BACKEND)
-        //     ->setLocation(Target::WIDGET_BACK_EDITFILE_BELOW_HEADER)
-        //     ->setCallback([$this, 'outputActionsWidget'])
-        //     ->setClass('editors-actions-widget')
-        //     ->setDefer(false)
-        // ;
-
         return [
             $widget1,
-            // $widget2,
         ];
     }
 
@@ -62,7 +59,7 @@ class EditorsTrackExtension extends SimpleExtension
     protected function registerBackendControllers()
     {
         return [
-            '/' => new EditorsTrackController(),
+            '/' => new WhoIsEditingController(),
         ];
     }
 
@@ -74,16 +71,15 @@ class EditorsTrackExtension extends SimpleExtension
         return [
             'templates' => [
                 'position'  => 'prepend',
-                'namespace' => 'editorstrack',
+                'namespace' => 'whoisediting',
             ]
         ];
     }
 
-
     /**
      * The callback function to render the widget template.
      *
-     * @return string
+     * @return string HTML that displays the widget
      */
     public function outputActionsWidget()
     {
@@ -91,13 +87,12 @@ class EditorsTrackExtension extends SimpleExtension
         $request = $app['request'];
         $user = $app['users']->getCurrentUser();
 
-        $actions = $app['editorstrack.service']->fetchActions($request, $request->get('contenttypeslug'), $request->get('id'), $user['id']);
+        $actions = $app['whoisediting.service']->fetchActions($request, $request->get('contenttypeslug'), $request->get('id'), $user['id']);
 
         return $this->renderTemplate('actions_widget.twig', [
             'actions' => $actions,
-            'actionsmetadata' => $app['editorstrack.service']->getActionsMetaData(),
+            'actionsmetadata' => $app['whoisediting.service']->getActionsMetaData(),
         ]);
-
     }
 
     /**
@@ -107,9 +102,9 @@ class EditorsTrackExtension extends SimpleExtension
     {
         $this->extendDatabaseSchemaServices();
 
-        $app['editorstrack.service'] = $app->share(
+        $app['whoisediting.service'] = $app->share(
             function ($app) {
-                return new EditorsTrackService($app['storage']->getConnection());
+                return new WhoIsEditingService($app['storage']->getConnection());
             }
          );
     }
@@ -120,7 +115,7 @@ class EditorsTrackExtension extends SimpleExtension
     protected function registerExtensionTables()
     {
         return [
-            'extension_editors_track_actions' => Storage\Schema\Table\ActionsTable::class
+            'extension_who_is_editing' => Storage\Schema\Table\ActionsTable::class
         ];
     }
 
@@ -152,7 +147,7 @@ class EditorsTrackExtension extends SimpleExtension
         $app = $this->getContainer();
         $user = $app['users']->getCurrentUser();
 
-        $app['editorstrack.service']->update($event->getContentType(), $event->getId(), $user['id'], 'update');
+        $app['whoisediting.service']->update($event->getContentType(), $event->getId(), $user['id'], 'update');
     }
 
     /**
@@ -165,7 +160,7 @@ class EditorsTrackExtension extends SimpleExtension
         $app = $this->getContainer();
         $user = $app['users']->getCurrentUser();
 
-        $app['editorstrack.service']->update($event->getContentType(), $event->getId(), $user['id'], 'delete');
+        $app['whoisediting.service']->update($event->getContentType(), $event->getId(), $user['id'], 'delete');
     }
 
 }
