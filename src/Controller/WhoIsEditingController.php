@@ -56,7 +56,7 @@ class WhoIsEditingController extends Base
 
         $actions = $app['whoisediting.service']->fetchActions($request, $request->query->get('contenttype'), $request->query->get('recordID'), $user['id']);
 
-        return $this->render('@whoisediting/actions_widget.twig', [
+        return $app['twig']->render('@whoisediting/actions_widget.twig', [
             'actions' => $actions,
             'actionsmetadata' => $app['whoisediting.service']->getActionsMetaData(),
         ], []);

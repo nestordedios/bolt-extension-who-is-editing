@@ -6,10 +6,12 @@
   {% endfor %}
 </div>
 
-<script>
-  var whoiseditingdata = {
-    recordID: '{{ actions|first()['record_id'] }}',
-    contenttype: '{{ actions|first()['contenttype'] }}',
-    userID: '{{ user.id }}',
-  }
-</script>
+{% if actions %}
+  <script>
+    var whoiseditingdata = {
+      recordID: '{{ actions|first()['record_id'] }}',
+      contenttype: '{{ actions|first()['contenttype'] }}',
+      userID: '{{ user.id }}',
+    }
+  </script>
+{% endif %}
