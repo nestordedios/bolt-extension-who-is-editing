@@ -3,6 +3,7 @@
 namespace Bolt\Extension\TwoKings\WhoIsEditing;
 
 use Bolt\Asset\File\JavaScript;
+use Bolt\Asset\File\Stylesheet;
 use Bolt\Asset\Target;
 use Bolt\Asset\Widget\Widget;
 use Bolt\Controller\Zone;
@@ -34,8 +35,14 @@ class WhoIsEditingExtension extends SimpleExtension
      */
     protected function registerAssets()
     {
-        $asset = JavaScript::create()
+        $javascript = JavaScript::create()
             ->setFileName('who-is-editing.js')
+            ->setLate(true)
+            ->setZone(Zone::BACKEND)
+        ;
+
+        $css = Stylesheet::create()
+            ->setFileName('who-is-editing.css')
             ->setLate(true)
             ->setZone(Zone::BACKEND)
         ;
@@ -50,6 +57,8 @@ class WhoIsEditingExtension extends SimpleExtension
 
         return [
             $widget1,
+            $javascript,
+            $css
         ];
     }
 
