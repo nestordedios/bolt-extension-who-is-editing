@@ -3,7 +3,7 @@ $(document).ready(function(){
     if(typeof whoiseditingdata != 'undefined') {
         window.setInterval(function(){
             updateWidget();
-        }, 3000);
+        }, whoiseditingdata["timeInterval"]);
 
         $( window ).on('beforeunload', function() {
             updateWidget('close');

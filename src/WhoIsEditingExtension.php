@@ -101,6 +101,7 @@ class WhoIsEditingExtension extends SimpleExtension
         return $this->renderTemplate('actions_widget.twig', [
             'actions' => $actions,
             'actionsmetadata' => $app['whoisediting.service']->getActionsMetaData(),
+            'whoiseditingconfig' => $app['whoisediting.config'],
         ]);
     }
 
@@ -115,7 +116,21 @@ class WhoIsEditingExtension extends SimpleExtension
             function ($app) {
                 return new WhoIsEditingService($app['storage']->getConnection());
             }
-         );
+        );
+
+        $app['whoisediting.config'] = $app->share(function ($app) {
+            return parent::getConfig();
+        });
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function getDefaultConfig()
+    {
+        return [
+            'timeInterval' => 3000,
+        ];
     }
 
     /**

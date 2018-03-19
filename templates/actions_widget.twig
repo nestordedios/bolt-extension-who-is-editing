@@ -24,6 +24,7 @@
         recordID: '{{ actions|first()['record_id'] }}',
         contenttype: '{{ actions|first()['contenttype'] }}',
         userID: '{{ user.id }}',
+        whoiseditingTimeInterval: '{{ whoiseditingconfig['timeInterval'] }}'
       }
     </script>
   {% endif %}

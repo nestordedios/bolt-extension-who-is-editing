@@ -59,6 +59,7 @@ class WhoIsEditingController extends Base
         return $app['twig']->render('@whoisediting/actions_widget.twig', [
             'actions' => $actions,
             'actionsmetadata' => $app['whoisediting.service']->getActionsMetaData(),
+            'whoiseditingconfig' => $app['whoisediting.config'],
         ], []);
 
     }
