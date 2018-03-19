@@ -1,0 +1,4 @@
+# This value sets the time-interval for the widget to update.
+# Note that the time value is in miliseconds. 1000 miliseconds = 1 second.
+# Time interval will default to 3 seconds if no other value is given
+timeInterval: 3000
