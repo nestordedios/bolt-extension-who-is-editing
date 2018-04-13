@@ -42,6 +42,7 @@ class WhoIsEditingController extends Base
     {
         $user = $app['users']->getCurrentUser();
         $recordId = $request->query->get('recordID');
+        $hourstoSubstract = $app['whoisediting.config']['lastActions'];
 
         $database = $app['storage']->getConnection();
 
@@ -54,7 +55,7 @@ class WhoIsEditingController extends Base
 
         $app['whoisediting.service']->update($request->query->get('contenttype'), $request->query->get('recordID'), $user['id'], $action);
 
-        $actions = $app['whoisediting.service']->fetchActions($request, $request->query->get('contenttype'), $request->query->get('recordID'), $user['id']);
+        $actions = $app['whoisediting.service']->fetchActions($request, $request->query->get('contenttype'), $request->query->get('recordID'), $user['id'], $hourstoSubstract);
 
         return $app['twig']->render('@whoisediting/actions_widget.twig', [
             'actions' => $actions,

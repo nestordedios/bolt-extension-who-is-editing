@@ -40,14 +40,15 @@ class WhoIsEditingService {
     /**
     * Fetch the actions from database
     *
-    * @param \Request $request     The Request object
-    * @param string   $contenttype The slug of the contenttype
-    * @param int      $contenid    The id of the record
-    * @param int      $user_id     The id of the current user viewing the record
+    * @param \Request $request              The Request object
+    * @param string   $contenttype          The slug of the contenttype
+    * @param int      $contenid             The id of the record
+    * @param int      $user_id              The id of the current user viewing the record
+    * @param int      $hoursToSubstract     The interval of hours to substract to query actions within the hours interval
     *
     * @return array The array of actions
     */
-    public function fetchActions($request, $contenttype, $contentid, $user_id)
+    public function fetchActions($request, $contenttype, $contentid, $user_id, $hoursToSubstract)
     {
 
         if($request->get('_route') == 'editcontent') {
@@ -71,6 +72,7 @@ class WhoIsEditingService {
         $actionsSelectSQL .= " WHERE action.user_id = user.id and action.action != 'close'";
         $actionsSelectSQL .= " AND action.record_id = :record_id";
         $actionsSelectSQL .= " AND action.contenttype = :contenttype";
+        $actionsSelectSQL .= " AND action.date >= DATE_ADD('" . date("Y-m-d H:i:s") . "', INTERVAL -$hoursToSubstract HOUR)";
         $actionsSelectSQL .= " AND action.user_id != :action_user_id";
         $actionsSelectSQL .= " AND user.id != :user_id";
 

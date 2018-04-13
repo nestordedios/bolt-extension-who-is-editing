@@ -95,8 +95,9 @@ class WhoIsEditingExtension extends SimpleExtension
         $app = $this->getContainer();
         $request = $app['request'];
         $user = $app['users']->getCurrentUser();
+        $hourstoSubstract = $this->getConfig()['lastActions'];
 
-        $actions = $app['whoisediting.service']->fetchActions($request, $request->get('contenttypeslug'), $request->get('id'), $user['id']);
+        $actions = $app['whoisediting.service']->fetchActions($request, $request->get('contenttypeslug'), $request->get('id'), $user['id'], $hourstoSubstract);
 
         return $this->renderTemplate('actions_widget.twig', [
             'actions' => $actions,
