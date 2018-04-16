@@ -95,8 +95,21 @@ class WhoIsEditingExtension extends SimpleExtension
         $app = $this->getContainer();
         $request = $app['request'];
         $user = $app['users']->getCurrentUser();
+        $hourstoSubstract = $this->getConfig()['lastActions'];
 
-        $actions = $app['whoisediting.service']->fetchActions($request, $request->get('contenttypeslug'), $request->get('id'), $user['id']);
+        $actions = $app['whoisediting.service']->fetchActions($request, $request->get('contenttypeslug'), $request->get('id'), $user['id'], $hourstoSubstract);
+
+        // If we don't have actions to show, show nothing and set ajax request data
+        if(!$actions) {
+            $editcontentRecord = parse_url($request->server->get('SCRIPT_URL'));
+            $cotenttype = explode('/', $editcontentRecord['path'])[3];
+            $id = explode('/', $editcontentRecord['path'])[4];
+            return $app['twig']->render('@whoisediting/no_actions.twig', [
+                'cotenttype' => $cotenttype,
+                'id'         => $id,
+                'whoiseditingconfig' => $app['whoisediting.config'],
+            ]);
+        }
 
         return $this->renderTemplate('actions_widget.twig', [
             'actions' => $actions,
