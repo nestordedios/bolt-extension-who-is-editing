@@ -16,7 +16,7 @@ $(document).ready(function(){
 
     function updateWidget(action = 'editcontent'){
 
-        var url = $('.actions-container').attr('data-actions-url');
+        var url = '/bolt/editorsActions';
 
         var requestData = {
             // whoiseditingdata array is populated in actions_widget.twig
