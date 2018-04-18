@@ -111,15 +111,15 @@ class WhoIsEditingExtension extends SimpleExtension
             $cotenttype = explode('/', $editcontentRecord['path'])[3];
             $id = explode('/', $editcontentRecord['path'])[4];
             return $app['twig']->render('@whoisediting/no_actions.twig', [
-                'cotenttype' => $cotenttype,
-                'id'         => $id,
+                'contenttype'        => $contenttype,
+                'id'                 => $id,
                 'whoiseditingconfig' => $app['whoisediting.config'],
             ]);
         }
 
         return $this->renderTemplate('actions_widget.twig', [
-            'actions' => $actions,
-            'actionsmetadata' => $app['whoisediting.service']->getActionsMetaData(),
+            'actions'            => $actions,
+            'actionsmetadata'    => $app['whoisediting.service']->getActionsMetaData(),
             'whoiseditingconfig' => $app['whoisediting.config'],
         ]);
     }
