@@ -16,8 +16,6 @@ $(document).ready(function(){
 
     function updateWidget(action = 'editcontent'){
 
-        var url = '/bolt/editorsActions';
-
         var requestData = {
             // whoiseditingdata array is populated in actions_widget.twig
             recordID: whoiseditingdata["recordID"],
@@ -27,7 +25,7 @@ $(document).ready(function(){
         }
 
         var request = $.ajax({
-            url: url,
+            url: whoiseditingdata["url"],
             method: "GET",
             data: requestData,
             dataType: "html"

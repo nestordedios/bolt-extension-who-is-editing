@@ -22,7 +22,8 @@
           recordID: '{{ actions|first()['record_id'] }}',
           contenttype: '{{ actions|first()['contenttype'] }}',
           userID: '{{ user.id }}',
-          whoiseditingTimeInterval: '{{ whoiseditingconfig['timeInterval'] }}'
+          whoiseditingTimeInterval: '{{ whoiseditingconfig['timeInterval'] }}',
+          url: '{{ path('whoisediting.actions') }}'
         }
       </script>
 {% endif %}
