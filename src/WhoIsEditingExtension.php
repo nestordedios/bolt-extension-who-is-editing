@@ -97,7 +97,13 @@ class WhoIsEditingExtension extends SimpleExtension
         $user = $app['users']->getCurrentUser();
         $hourstoSubstract = $this->getConfig()['lastActions'];
 
-        $actions = $app['whoisediting.service']->fetchActions($request, $request->get('contenttypeslug'), $request->get('id'), $user['id'], $hourstoSubstract);
+        $actions = $app['whoisediting.service']->fetchActions(
+            $request,
+            $request->get('contenttypeslug'),
+            $request->get('id'),
+            $user['id'],
+            $hourstoSubstract
+        );
 
         // If we don't have actions to show, show nothing and set ajax request data
         if(!$actions) {
@@ -105,15 +111,15 @@ class WhoIsEditingExtension extends SimpleExtension
             $cotenttype = explode('/', $editcontentRecord['path'])[3];
             $id = explode('/', $editcontentRecord['path'])[4];
             return $app['twig']->render('@whoisediting/no_actions.twig', [
-                'cotenttype' => $cotenttype,
-                'id'         => $id,
+                'contenttype'        => $contenttype,
+                'id'                 => $id,
                 'whoiseditingconfig' => $app['whoisediting.config'],
             ]);
         }
 
         return $this->renderTemplate('actions_widget.twig', [
-            'actions' => $actions,
-            'actionsmetadata' => $app['whoisediting.service']->getActionsMetaData(),
+            'actions'            => $actions,
+            'actionsmetadata'    => $app['whoisediting.service']->getActionsMetaData(),
             'whoiseditingconfig' => $app['whoisediting.config'],
         ]);
     }
@@ -143,6 +149,7 @@ class WhoIsEditingExtension extends SimpleExtension
     {
         return [
             'timeInterval' => 3000,
+            'lastActions'  => 3,
         ];
     }
 
@@ -184,7 +191,12 @@ class WhoIsEditingExtension extends SimpleExtension
         $app = $this->getContainer();
         $user = $app['users']->getCurrentUser();
 
-        $app['whoisediting.service']->update($event->getContentType(), $event->getId(), $user['id'], 'update');
+        $app['whoisediting.service']->update(
+            $event->getContentType(),
+            $event->getId(),
+            $user['id'],
+            'update'
+        );
     }
 
     /**
@@ -197,7 +209,12 @@ class WhoIsEditingExtension extends SimpleExtension
         $app = $this->getContainer();
         $user = $app['users']->getCurrentUser();
 
-        $app['whoisediting.service']->update($event->getContentType(), $event->getId(), $user['id'], 'delete');
+        $app['whoisediting.service']->update(
+            $event->getContentType(),
+            $event->getId(),
+            $user['id'],
+            'delete'
+        );
     }
 
 }

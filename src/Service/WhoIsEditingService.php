@@ -54,13 +54,9 @@ class WhoIsEditingService {
         if($request->get('_route') == 'editcontent') {
 
             if ($this->exist($contenttype, $contentid, $user_id)) {
-
                 $this->update($contenttype, $contentid, $user_id, 'editcontent');
-
             } else {
-
                 $this->insert($contenttype, $contentid, $user_id);
-
             }
 
         }

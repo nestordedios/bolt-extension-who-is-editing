@@ -1,29 +1,27 @@
 {% if actions %}
+
   <div class="panel panel-default panel-last-modified">
     <div class="panel-heading">
-        <i class="fa fa-fw fa-edit"></i>
-        Who is editing?
+      <i class="fa fa-fw fa-edit"></i>
+      Who is editing?
     </div>
-
     <div class="panel-body actions-container" data-actions-url="{{ path('whoisediting.actions') }}">
-
-          {% for action in actions %}
-              <div class="alert {{ actionsmetadata[action.action].class }}" role="alert">
-                {{ action.displayname }} {{ actionsmetadata[action.action].text  }} this record
-              </div>
-          {% endfor %}
+      {% for action in actions %}
+        <div class="alert {{ actionsmetadata[action.action].class }}" role="alert">
+          {{ action.displayname }} {{ actionsmetadata[action.action].text  }} this record
+        </div>
+      {% endfor %}
     </div>
-
-
   </div>
 
   <script>
-        var whoiseditingdata = {
-          recordID: '{{ actions|first()['record_id'] }}',
-          contenttype: '{{ actions|first()['contenttype'] }}',
-          userID: '{{ user.id }}',
-          whoiseditingTimeInterval: '{{ whoiseditingconfig['timeInterval'] }}',
-          url: '{{ path('whoisediting.actions') }}'
-        }
-      </script>
+    var whoiseditingdata = {
+      recordID: '{{ actions|first()['record_id'] }}',
+      contenttype: '{{ actions|first()['contenttype'] }}',
+      userID: '{{ user.id }}',
+      whoiseditingTimeInterval: '{{ whoiseditingconfig['timeInterval'] }}',
+      url: '{{ path('whoisediting.actions') }}'
+    }
+  </script>
+
 {% endif %}
