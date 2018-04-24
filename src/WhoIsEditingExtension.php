@@ -107,9 +107,8 @@ class WhoIsEditingExtension extends SimpleExtension
 
         // If we don't have actions to show, show nothing and set ajax request data
         if(!$actions) {
-            $editcontentRecord = parse_url($request->server->get('SCRIPT_URL'));
-            $contenttype = explode('/', $editcontentRecord['path'])[3];
-            $id = explode('/', $editcontentRecord['path'])[4];
+            $contenttype = $request->attributes->get('contenttypeslug');
+            $id = $request->attributes->get('id');
             return $app['twig']->render('@whoisediting/no_actions.twig', [
                 'contenttype'        => $contenttype,
                 'id'                 => $id,
