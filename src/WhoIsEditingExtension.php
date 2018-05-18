@@ -94,13 +94,14 @@ class WhoIsEditingExtension extends SimpleExtension
     {
         $app = $this->getContainer();
         $request = $app['request'];
-        $user = $app['users']->getCurrentUser();
         $recordId = $request->get('id');
-        $contenttype = $request->get('contenttypeslug');
-        $hourstoSubstract = $this->getConfig()['lastActions'];
         $actions = [];
 
         if ($recordId) {
+            $user = $app['users']->getCurrentUser();
+            $contenttype = $request->get('contenttypeslug');
+            $hourstoSubstract = $this->getConfig()['lastActions'];
+            
             $actions = $app['whoisediting.service']->fetchActions(
                 $request,
                 $contenttype,
