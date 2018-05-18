@@ -13,10 +13,8 @@ use Symfony\Component\HttpFoundation\Response;
  *
  * @author Néstor de Dios Fernández <nestor@twokings.nl>
  */
-
 class WhoIsEditingController extends Base
 {
-
     /**
      * {@inheritdoc}
      */
@@ -34,42 +32,40 @@ class WhoIsEditingController extends Base
      * The callback function to render the widget template.
      *
      * @param Application $app
-     * @param Request $request
+     * @param Request     $request
      *
-     * @return \Response
+     * @return Response
      */
     public function getEditorsActions(Application $app, Request $request)
     {
-        $user = $app['users']->getCurrentUser();
+        $userId = $app['users']->getCurrentUser()['id'];
         $recordId = $request->query->get('recordID');
-        $hourstoSubstract = $app['whoisediting.config']['lastActions'];
-
-        $database = $app['storage']->getConnection();
+        $contenttype = $request->query->get('contenttype');
+        $hoursToSubstract = $app['whoisediting.config']['lastActions'];
 
         if ($request->query->get('action') == 'close') {
             $action = 'close';
-        }
-        else {
+        } else {
             $action = 'editcontent';
         }
 
         $app['whoisediting.service']->update(
-            $request->query->get('contenttype'),
-            $request->query->get('recordID'),
-            $user['id'],
+            $contenttype,
+            $recordId,
+            $userId,
             $action
         );
 
         $actions = $app['whoisediting.service']->fetchActions(
             $request,
-            $request->query->get('contenttype'),
-            $request->query->get('recordID'),
-            $user['id'],
-            $hourstoSubstract
+            $contenttype,
+            $recordId,
+            $userId,
+            $hoursToSubstract
         );
 
         // If we don't have actions to show, show nothing and set ajax request data
-        if(!$actions) {
+        if (!$actions) {
             $editcontentRecord = parse_url($request->server->get('HTTP_REFERER'));
             $contenttype = explode('/', $editcontentRecord['path'])[3];
             $id = explode('/', $editcontentRecord['path'])[4];
@@ -85,7 +81,5 @@ class WhoIsEditingController extends Base
             'actionsmetadata'    => $app['whoisediting.service']->getActionsMetaData(),
             'whoiseditingconfig' => $app['whoisediting.config'],
         ], []);
-
     }
-
 }
