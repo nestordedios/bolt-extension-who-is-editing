@@ -9,7 +9,6 @@ use Bolt\Storage\Database\Schema\Table\BaseTable;
  *
  * @author Néstor de Dios Fernández <nestor@twokings.nl>
  */
-
 class ActionsTable extends BaseTable
 {
     /**
@@ -18,7 +17,7 @@ class ActionsTable extends BaseTable
     protected function addColumns()
     {
         $this->table->addColumn('id', 'integer', ['autoincrement' => true]);
-        $this->table->addColumn('user_id', 'integer',  []);
+        $this->table->addColumn('user_id', 'integer', []);
         $this->table->addColumn('contenttype', 'string', []);
         $this->table->addColumn('record_id', 'integer', []);
         $this->table->addColumn('action', 'string', []);

@@ -14,10 +14,6 @@ use Bolt\Extension\SimpleExtension;
 use Bolt\Extension\TwoKings\WhoIsEditing\Controller\WhoIsEditingController;
 use Bolt\Extension\TwoKings\WhoIsEditing\Service\WhoIsEditingService;
 use Silex\Application;
-use Silex\ControllerCollection;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
 
 /**
  * WhoIsEditing extension class.
@@ -58,7 +54,7 @@ class WhoIsEditingExtension extends SimpleExtension
         return [
             $widget1,
             $javascript,
-            $css
+            $css,
         ];
     }
 
@@ -81,7 +77,7 @@ class WhoIsEditingExtension extends SimpleExtension
             'templates' => [
                 'position'  => 'prepend',
                 'namespace' => 'whoisediting',
-            ]
+            ],
         ];
     }
 
@@ -98,19 +94,19 @@ class WhoIsEditingExtension extends SimpleExtension
         $actions = [];
 
         if ($recordId) {
-            $user = $app['users']->getCurrentUser();
+            $userId = $app['users']->getCurrentUser()['id'];
             $contenttype = $request->get('contenttypeslug');
-            $hourstoSubstract = $this->getConfig()['lastActions'];
-            
+            $hoursToSubstract = $this->getConfig()['lastActions'];
+
             $actions = $app['whoisediting.service']->fetchActions(
                 $request,
                 $contenttype,
                 $recordId,
-                $user['id'],
-                $hourstoSubstract
+                $userId,
+                $hoursToSubstract
             );
 
-            if(!$actions) {
+            if (!$actions) {
                 // If we don't have actions to show, show nothing and set ajax request data
                 return $app['twig']->render('@whoisediting/no_actions.twig', [
                     'contenttype'        => $contenttype,
@@ -140,7 +136,7 @@ class WhoIsEditingExtension extends SimpleExtension
             }
         );
 
-        $app['whoisediting.config'] = $app->share(function ($app) {
+        $app['whoisediting.config'] = $app->share(function () {
             return parent::getConfig();
         });
     }
@@ -162,7 +158,7 @@ class WhoIsEditingExtension extends SimpleExtension
     protected function registerExtensionTables()
     {
         return [
-            'extension_who_is_editing' => Storage\Schema\Table\ActionsTable::class
+            'extension_who_is_editing' => Storage\Schema\Table\ActionsTable::class,
         ];
     }
 
@@ -173,10 +169,10 @@ class WhoIsEditingExtension extends SimpleExtension
     {
         $parentEvents = parent::getSubscribedEvents();
         $localEvents = [
-            StorageEvents::POST_SAVE  => [
+            StorageEvents::POST_SAVE   => [
                 ['onSave', 0],
             ],
-            StorageEvents::POST_DELETE  => [
+            StorageEvents::POST_DELETE => [
                 ['onDelete', 0],
             ],
         ];
@@ -219,5 +215,4 @@ class WhoIsEditingExtension extends SimpleExtension
             'delete'
         );
     }
-
 }

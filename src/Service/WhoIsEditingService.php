@@ -8,11 +8,10 @@ use Symfony\Component\HttpFoundation\Request;
 /**
  * Service class that handles CRUD functions
  *
- * @todo: Logic for adding widget when editing config files
+ * @todo Logic for adding widget when editing config files
  *
  * @author Néstor de Dios Fernández <nestor@twokings.nl>
  */
-
 class WhoIsEditingService
 {
     /**
@@ -25,11 +24,10 @@ class WhoIsEditingService
      */
     private $actionsMetaData = [
         'editcontent' => ['text' => 'is editing', 'class' => 'alert-warning'],
-        'update'      => ['text' => 'updated',    'class' => 'alert-success'],
-        'close'       => ['text' => 'closed',     'class' => 'alert-info'],
-        'delete'      => ['text' => 'deleted',    'class' => 'alert-danger'],
+        'update'      => ['text' => 'updated', 'class' => 'alert-success'],
+        'close'       => ['text' => 'closed', 'class' => 'alert-info'],
+        'delete'      => ['text' => 'deleted', 'class' => 'alert-danger'],
     ];
-
 
     function __construct($database)
     {
@@ -37,24 +35,24 @@ class WhoIsEditingService
     }
 
     /**
-    * Fetch the actions from database
-    *
-    * @param Request  $request              The Request object
-    * @param string   $contenttype          The slug of the contenttype
-    * @param int      $contentid            The id of the record
-    * @param int      $user_id              The id of the current user viewing the record
-    * @param int      $hoursToSubstract     The interval of hours to substract to query actions within the hours interval
-    *
-    * @return array The array of actions
-    */
-    public function fetchActions($request, $contenttype, $contentid, $user_id, $hoursToSubstract)
+     * Fetch the actions from database
+     *
+     * @param Request $request          The Request object
+     * @param string  $contenttype      The slug of the contenttype
+     * @param int     $contentId        The id of the record
+     * @param int     $userId           The id of the current user viewing the record
+     * @param int     $hoursToSubstract The interval of hours to substract to query actions within the hours interval
+     *
+     * @return array The array of actions
+     */
+    public function fetchActions($request, $contenttype, $contentId, $userId, $hoursToSubstract)
     {
 
-        if($request->get('_route') == 'editcontent') {
-            if ($this->exist($contenttype, $contentid, $user_id)) {
-                $this->update($contenttype, $contentid, $user_id, 'editcontent');
+        if ($request->get('_route') == 'editcontent') {
+            if ($this->exist($contenttype, $contentId, $userId)) {
+                $this->update($contenttype, $contentId, $userId, 'editcontent');
             } else {
-                $this->insert($contenttype, $contentid, $user_id);
+                $this->insert($contenttype, $contentId, $userId);
             }
         }
 
@@ -67,10 +65,10 @@ class WhoIsEditingService
         $actionsSelectSQL .= " AND user_table.id != :user_id";
 
         $statement = $this->database->prepare($actionsSelectSQL);
-        $statement->bindParam('record_id', $contentid);
+        $statement->bindParam('record_id', $contentId);
         $statement->bindParam('contenttype', $contenttype);
-        $statement->bindParam('action_user_id', $user_id);
-        $statement->bindParam('user_id', $user_id);
+        $statement->bindParam('action_user_id', $userId);
+        $statement->bindParam('user_id', $userId);
         $statement->execute();
         $actions = $statement->fetchAll();
 
@@ -81,12 +79,12 @@ class WhoIsEditingService
      * Check if an Action record exist in the database
      *
      * @param string $contenttype The slug of the contenttype
-     * @param int    $contenid    The id of the record
-     * @param int    $user_id     The id of the current user viewing the record
+     * @param int    $contentId    The id of the record
+     * @param int    $userId      The id of the current user viewing the record
      *
      * @return boolean
      */
-    public function exist($contenttype, $contentid, $user_id)
+    public function exist($contenttype, $contentId, $userId)
     {
         $selectQueryBuilder = $this->database->createQueryBuilder();
 
@@ -94,15 +92,14 @@ class WhoIsEditingService
             ->select('*')
             ->from('bolt_extension_who_is_editing')
             ->where('user_id = :user_id', 'contenttype = :contenttype', 'record_id = :record_id')
-            ->setParameter('user_id', $user_id)
+            ->setParameter('user_id', $userId)
             ->setParameter('contenttype', $contenttype)
-            ->setParameter('record_id', $contentid)
+            ->setParameter('record_id', $contentId)
         ;
 
         $selectQueryBuilderResults = $selectQueryBuilder->execute()->fetchAll();
 
-        if( empty($selectQueryBuilderResults) )
-        {
+        if (empty($selectQueryBuilderResults)) {
             return false;
         }
 
@@ -113,35 +110,34 @@ class WhoIsEditingService
      * Insert a new Action record in the database
      *
      * @param string $contenttype The slug of the contenttype
-     * @param int    $contenid    The id of the record
-     * @param int    $user_id     The id of the current user viewing the record
+     * @param int    $contentId    The id of the record
+     * @param int    $userId      The id of the current user viewing the record
      *
      * @return void
      */
-    public function insert($contenttype, $contentid, $user_id)
+    public function insert($contenttype, $contentId, $userId)
     {
         $this->database
             ->insert('bolt_extension_who_is_editing', [
-                'user_id' => $user_id,
+                'user_id'     => $userId,
                 'contenttype' => $contenttype,
-                'record_id' => $contentid,
-                'action' => 'editcontent',
-                'date' => date("Y-m-d H:i:s")
-            ])
-        ;
+                'record_id'   => $contentId,
+                'action'      => 'editcontent',
+                'date'        => date("Y-m-d H:i:s"),
+            ]);
     }
 
     /**
      * Modify an Action record in the database
      *
      * @param string $contenttype The slug of the contenttype
-     * @param int    $contenid    The id of the record
-     * @param int    $user_id     The id of the current user viewing the record
+     * @param int    $contentId    The id of the record
+     * @param int    $userId      The id of the current user viewing the record
      * @param string $action      The action performed
      *
      * @return void
      */
-    public function update($contenttype, $contentid, $user_id, $action = 'editcontent')
+    public function update($contenttype, $contentId, $userId, $action = 'editcontent')
     {
         $updateQueryBuilder = $this->database->createQueryBuilder();
         $updateQueryBuilder
@@ -151,9 +147,9 @@ class WhoIsEditingService
             ->where('user_id = :user_id', 'contenttype = :contenttype', 'record_id = :record_id')
             ->setParameter('action', $action)
             ->setParameter('date', date("Y-m-d H:i:s"))
-            ->setParameter('user_id', $user_id)
+            ->setParameter('user_id', $userId)
             ->setParameter('contenttype', $contenttype)
-            ->setParameter('record_id', $contentid)
+            ->setParameter('record_id', $contentId)
         ;
         $updateQueryBuilder->execute();
     }
