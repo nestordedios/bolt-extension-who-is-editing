@@ -6,7 +6,8 @@ Do note, however, that it does *not* prevent people from editing and saving.
 
 ### How to configure?
 
-There is no configuration needed. Install it and you are ready to go.
+__Important!__
+After installation run a database update (Configuration -> Check database -> Update the database).  
 
 ### How it works?
 
