@@ -106,13 +106,30 @@ class WhoIsEditingExtension extends SimpleExtension
                 $hoursToSubstract
             );
 
+            $token = $request->get('token');
+            $internal_token = $app['csrf']->getToken('content_edit');
+            if($token == $internal_token) {
+                $token_valid = true;
+            } else {
+                $token_valid = false;
+            }
+
             if (!$actions) {
+                if(!$recordId) {
+                  $recordId = $request->query->get('recordId');
+                }
                 // If we don't have actions to show, show nothing and set ajax request data
-                return $app['twig']->render('@whoisediting/no_actions.twig', [
-                    'contenttype'        => $contenttype,
-                    'id'                 => $recordId,
-                    'whoiseditingconfig' => $app['whoisediting.config'],
-                ]);
+                $options = [
+                  'contenttype'        => $contenttype,
+                  'id'                 => $recordId,
+                  'whoiseditingconfig' => $app['whoisediting.config'],
+                ];
+
+                if($token_valid) {
+                  return $app['twig']->render('@whoisediting/no_actions.twig', $options);
+                } else {
+                  return $app['twig']->render('@whoisediting/invalid_token.twig', $options);
+                }
             }
         }
 
