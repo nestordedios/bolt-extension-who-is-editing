@@ -24,7 +24,7 @@ class WhoIsEditingService
      */
     private $actionsMetaData = [
         'editcontent' => ['text' => 'is editing', 'class' => 'alert-warning'],
-        'update'      => ['text' => 'updated', 'class' => 'alert-success'],
+        'update'      => ['text' => 'updated', 'class' => 'alert-danger'],
         'close'       => ['text' => 'closed', 'class' => 'alert-info'],
         'delete'      => ['text' => 'deleted', 'class' => 'alert-danger'],
     ];
