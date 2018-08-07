@@ -38,7 +38,13 @@ class WhoIsEditingController extends Base
      */
     public function getEditorsActions(Application $app, Request $request)
     {
-        $userId = $app['users']->getCurrentUser()['id'];
+        $user = $app['users']->getCurrentUser();
+        if (!$user) {
+            //user is not logged in, so show nothing in widget and let Bolt do redirect to login page
+            return new Response();
+        }
+        
+        $userId = $user['id'];
         $recordId = $request->query->get('recordID');
         $contenttype = $request->query->get('contenttype');
         $hoursToSubstract = $app['whoisediting.config']['lastActions'];
