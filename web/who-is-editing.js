@@ -14,15 +14,20 @@ $(document).ready(function(){
         });
     }
 
-    function updateWidget(action = 'editcontent'){
+    function updateWidget(action){
+        if(typeof action == 'undefined') {
+            action = 'editcontent';
+        }
+        var token = $('#content_edit__token').val();
 
         var requestData = {
             // whoiseditingdata array is populated in actions_widget.twig
             recordID: whoiseditingdata["recordID"],
             contenttype: whoiseditingdata["contenttype"],
             userID: whoiseditingdata["userID"],
-            action: action,
-        }
+            token: token,
+            action: action
+        };
 
         var request = $.ajax({
             url: whoiseditingdata["url"],

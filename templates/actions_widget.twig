@@ -8,7 +8,12 @@
     <div class="panel-body actions-container" data-actions-url="{{ path('whoisediting.actions') }}">
       {% for action in actions %}
         <div class="alert {{ actionsmetadata[action.action].class }}" role="alert">
-          {{ action.displayname }} {{ actionsmetadata[action.action].text  }} this record
+          <p>{{ action.displayname }} {{ actionsmetadata[action.action].text  }} this record.
+          {% if action.date|default() is not empty %}
+              {%- set dt = action.date|date('Y-m-d\\TH:i:sP') -%}
+              <time class="buic-moment" datetime="{{ dt }}">{{ action.date|localedatetime('%a %d %b %H:%M') }}</time>
+          {% endif %}
+          </p>
         </div>
       {% endfor %}
     </div>
@@ -19,6 +24,7 @@
       recordID: '{{ actions|first()['record_id'] }}',
       contenttype: '{{ actions|first()['contenttype'] }}',
       userID: '{{ user.id }}',
+      date: '{{ actions|first()['date']|default() }}',
       whoiseditingTimeInterval: '{{ whoiseditingconfig['timeInterval'] }}',
       url: '{{ path('whoisediting.actions') }}'
     }

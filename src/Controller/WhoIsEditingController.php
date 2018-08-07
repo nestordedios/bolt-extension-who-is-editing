@@ -70,16 +70,34 @@ class WhoIsEditingController extends Base
             $hoursToSubstract
         );
 
+        $token = $request->query->get('token');
+        $internal_token = $app['csrf']->getToken('content_edit');
+        if($token == $internal_token) {
+            $token_valid = true;
+        } else {
+            $token_valid = false;
+        }
+
         // If we don't have actions to show, show nothing and set ajax request data
         if (!$actions) {
-            $editcontentRecord = parse_url($request->server->get('HTTP_REFERER'));
-            $contenttype = explode('/', $editcontentRecord['path'])[3];
-            $id = explode('/', $editcontentRecord['path'])[4];
-            return $app['twig']->render('@whoisediting/no_actions.twig', [
-                'contenttype'        => $contenttype,
-                'id'                 => $id,
-                'whoiseditingconfig' => $app['whoisediting.config'],
-            ]);
+            $id = $recordId;
+
+            if($request->server->get('HTTP_REFERER')!==null) {
+              $editcontentRecord = parse_url($request->server->get('HTTP_REFERER'));
+              $contenttype = explode('/', $editcontentRecord['path'])[3];
+              $id = explode('/', $editcontentRecord['path'])[4];
+            }
+            $options =  [
+              'contenttype'        => $contenttype,
+              'id'                 => $id,
+              'whoiseditingconfig' => $app['whoisediting.config'],
+            ];
+
+            if($token_valid) {
+                return $app['twig']->render('@whoisediting/no_actions.twig', $options);
+            } else {
+                return $app['twig']->render('@whoisediting/invalid_token.twig', $options);
+            }
         }
 
         return $app['twig']->render('@whoisediting/actions_widget.twig', [
