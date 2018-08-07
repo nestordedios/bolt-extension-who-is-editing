@@ -56,7 +56,7 @@ class WhoIsEditingService
             }
         }
 
-        $actionsSelectSQL = "SELECT user_table.displayname, action.action, action.contenttype, action.record_id FROM bolt_users user_table, bolt_extension_who_is_editing action";
+        $actionsSelectSQL = "SELECT user_table.displayname, action.action, action.contenttype, action.record_id, action.date FROM bolt_users user_table, bolt_extension_who_is_editing action";
         $actionsSelectSQL .= " WHERE action.user_id = user_table.id and action.action != 'close'";
         $actionsSelectSQL .= " AND action.record_id = :record_id";
         $actionsSelectSQL .= " AND action.contenttype = :contenttype";
