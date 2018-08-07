@@ -1,9 +1,7 @@
 $(document).ready(function(){
 
-    if(typeof whoiseditingdata != 'undefined') {
-        window.setInterval(function(){
-            updateWidget();
-        }, whoiseditingdata["whoiseditingTimeInterval"]);
+    if(typeof whoiseditingdata !== 'undefined') {
+        window.who_is_editing_interval = window.setInterval(updateWidget, whoiseditingdata["whoiseditingTimeInterval"]);
 
         $( window ).on('beforeunload', function() {
             updateWidget('close');
@@ -15,7 +13,7 @@ $(document).ready(function(){
     }
 
     function updateWidget(action){
-        if(typeof action == 'undefined') {
+        if(typeof action === 'undefined') {
             action = 'editcontent';
         }
         var token = $('#content_edit__token').val();
