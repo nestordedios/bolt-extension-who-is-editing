@@ -1,6 +1,6 @@
 $(document).ready(function(){
 
-    if(typeof whoiseditingdata !== 'undefined') {
+    if(typeof whoiseditingdata != 'undefined') {
         window.setInterval(function(){
             updateWidget();
         }, whoiseditingdata["whoiseditingTimeInterval"]);
@@ -15,7 +15,7 @@ $(document).ready(function(){
     }
 
     function updateWidget(action){
-        if(action === 'undefined') {
+        if(typeof action == 'undefined') {
             action = 'editcontent';
         }
         var token = $('#content_edit__token').val();
