@@ -1,5 +1,5 @@
 {% if actions %}
-
+  {% set overridetimeout = false %}
   <div class="panel panel-default panel-last-modified">
     <div class="panel-heading">
       <i class="fa fa-fw fa-edit"></i>
@@ -14,7 +14,13 @@
               <time class="buic-moment" datetime="{{ dt }}">{{ action.date|localedatetime('%a %d %b %H:%M') }}</time>
           {% endif %}
           </p>
+          {% if action.action|default() == 'update' %}
+            <p>You will overwrite the changes made by {{ action.displayname }} if you save now. Please copy your changes to a separate file and refresh this page before continuing.</p>
+            {% set overridetimeout = true %}
+          {% endif %}
         </div>
+        {% if action.action|default() == 'update' %}
+        {% endif %}
       {% endfor %}
     </div>
   </div>
@@ -27,7 +33,11 @@
       date: '{{ actions|first()['date']|default() }}',
       whoiseditingTimeInterval: '{{ whoiseditingconfig['timeInterval'] }}',
       url: '{{ path('whoisediting.actions') }}'
-    }
+    };
+    {% if overridetimeout %}
+      clearInterval(window.who_is_editing_interval);
+      $('button#sidebar_save, button#content_edit_save').parent().children().removeClass('btn-primary').addClass('btn-default');
+    {% endif %}
   </script>
 
 {% endif %}
