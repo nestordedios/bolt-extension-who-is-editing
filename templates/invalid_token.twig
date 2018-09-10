@@ -1,7 +1,7 @@
 <div class="panel panel-default panel-last-modified">
     <div class="panel-body actions-container" data-actions-url="{{ path('whoisediting.actions') }}">
         <div class="alert alert-danger" role="alert">
-            Token expired, please <a href="../../overview/{{ contenttype }}">refresh the site</a>.
+            Token expired, please <a href="{{ path('editcontent', {'contenttypeslug': contenttype, 'id': id}) }}">reload the page</a>.
         </div>
     </div>
 </div>
