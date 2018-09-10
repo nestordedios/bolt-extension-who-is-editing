@@ -125,7 +125,7 @@ class WhoIsEditingExtension extends SimpleExtension
                   'whoiseditingconfig' => $app['whoisediting.config'],
                 ];
 
-                if($token_valid) {
+                if($token_valid == false) {
                   return $app['twig']->render('@whoisediting/no_actions.twig', $options);
                 } else {
                   return $app['twig']->render('@whoisediting/invalid_token.twig', $options);
