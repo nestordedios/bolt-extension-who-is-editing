@@ -39,10 +39,10 @@ class WhoIsEditingController extends Base
     public function getEditorsActions(Application $app, Request $request)
     {
         $user = $app['users']->getCurrentUser();
-        $userId = $user['id'];
         $recordId = $request->query->get('recordID');
         $contenttype = $request->query->get('contenttype');
         $hoursToSubstract = $app['whoisediting.config']['lastActions'];
+        $actions = [];
 
         if ($request->query->get('action') == 'close') {
             $action = 'close';
@@ -50,43 +50,44 @@ class WhoIsEditingController extends Base
             $action = 'editcontent';
         }
 
-        $app['whoisediting.service']->update(
-            $contenttype,
-            $recordId,
-            $userId,
-            $action
-        );
+        if ($user !== null) {
+            $userId = $user['id'];
+            $app['whoisediting.service']->update(
+                $contenttype,
+                $recordId,
+                $userId,
+                $action
+            );
 
-        $actions = $app['whoisediting.service']->fetchActions(
-            $request,
-            $contenttype,
-            $recordId,
-            $userId,
-            $hoursToSubstract
-        );
-
-        $token = $request->query->get('token');
-        $internal_token = $app['csrf']->getToken('content_edit');
-        if($token == $internal_token) {
-            $token_valid = true;
-        } else {
-            $token_valid = false;
+            $actions = $app['whoisediting.service']->fetchActions(
+                $request,
+                $contenttype,
+                $recordId,
+                $userId,
+                $hoursToSubstract
+            );
         }
 
         // If we don't have actions to show, show nothing and set ajax request data
-        if (!$actions) {
-            $id = $recordId;
-
-            if($request->server->get('HTTP_REFERER')!==null) {
+        if (empty($actions)) {
+            if($request->server->get('HTTP_REFERER') !== null) {
               $editcontentRecord = parse_url($request->server->get('HTTP_REFERER'));
               $contenttype = explode('/', $editcontentRecord['path'])[3];
-              $id = explode('/', $editcontentRecord['path'])[4];
+              $recordId = explode('/', $editcontentRecord['path'])[4];
             }
             $options =  [
               'contenttype'        => $contenttype,
-              'id'                 => $id,
+              'id'                 => $recordId,
               'whoiseditingconfig' => $app['whoisediting.config'],
             ];
+
+            $token = $request->query->get('token');
+            $internal_token = $app['csrf']->getToken('content_edit');
+            if($token == $internal_token) {
+                $token_valid = true;
+            } else {
+                $token_valid = false;
+            }
 
             if($token_valid) {
                 return $app['twig']->render('@whoisediting/no_actions.twig', $options);
