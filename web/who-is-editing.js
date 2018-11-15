@@ -5,6 +5,7 @@ $(document).ready(function(){
 
         $( window ).on('beforeunload', function() {
             updateWidget('close');
+            return undefined;
         });
 
         $( window ).load(function() {
