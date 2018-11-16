@@ -5,6 +5,7 @@ $(document).ready(function(){
 
         $( window ).on('beforeunload', function() {
             updateWidget('close');
+            clearInterval(window.who_is_editing_interval);
             return undefined;
         });
 
