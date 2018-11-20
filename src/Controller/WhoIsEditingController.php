@@ -90,9 +90,10 @@ class WhoIsEditingController extends Base
               $recordId = explode('/', $editcontentRecord['path'])[4];
             }
             $options =  [
-              'contenttype'        => $contenttype,
-              'id'                 => $recordId,
-              'whoiseditingconfig' => $app['whoisediting.config'],
+                'contenttype'        => $contenttype,
+                'id'                 => $recordId,
+                'whoiseditingconfig' => $app['whoisediting.config'],
+                'userId'             => $userId,
             ];
             
             return $app['twig']->render('@whoisediting/no_actions.twig', $options);
@@ -102,6 +103,7 @@ class WhoIsEditingController extends Base
             'actions'            => $actions,
             'actionsmetadata'    => $app['whoisediting.service']->getActionsMetaData(),
             'whoiseditingconfig' => $app['whoisediting.config'],
+            'userId'             => $userId,
         ]);
     }
 }
