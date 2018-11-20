@@ -90,14 +90,33 @@ class WhoIsEditingExtension extends SimpleExtension
     {
         $app = $this->getContainer();
         $request = $app['request'];
-        $recordId = $request->get('id');
+        $recordId = $request->get('id') ?: $request->query->get('recordId');
         $actions = [];
+        $user = $app['users']->getCurrentUser();
+        $contenttype = $request->get('contenttypeslug');
+
+        $token = $request->query->get('token');
+        $internal_token = $app['csrf']->getToken('content_edit');
+        if ($token == $internal_token) {
+            $token_valid = true;
+        } else {
+            $token_valid = false;
+        }
+
+        if ($token_valid === false || $user === null) {
+            $options = [
+                'contenttype'        => $contenttype,
+                'id'                 => $recordId,
+                'whoiseditingconfig' => $app['whoisediting.config'],
+            ];
+            return $app['twig']->render('@whoisediting/invalid_token.twig', $options);
+        }
+
+        $userId = $user['id'];
 
         if ($recordId) {
-            $userId = $app['users']->getCurrentUser()['id'];
-            $contenttype = $request->get('contenttypeslug');
             $hoursToSubstract = $this->getConfig()['lastActions'];
-
+    
             $actions = $app['whoisediting.service']->fetchActions(
                 $request,
                 $contenttype,
@@ -106,30 +125,14 @@ class WhoIsEditingExtension extends SimpleExtension
                 $hoursToSubstract
             );
 
-            $token = $request->get('token');
-            $internal_token = $app['csrf']->getToken('content_edit');
-            if($token == $internal_token) {
-                $token_valid = true;
-            } else {
-                $token_valid = false;
-            }
-
-            if (!$actions) {
-                if(!$recordId) {
-                  $recordId = $request->query->get('recordId');
-                }
-                // If we don't have actions to show, show nothing and set ajax request data
+            if (empty($actions)) {
                 $options = [
-                  'contenttype'        => $contenttype,
-                  'id'                 => $recordId,
-                  'whoiseditingconfig' => $app['whoisediting.config'],
+                    'contenttype'        => $contenttype,
+                    'id'                 => $recordId,
+                    'whoiseditingconfig' => $app['whoisediting.config'],
+                    'userId'             => $userId,
                 ];
-
-                if($token_valid == false) {
-                  return $app['twig']->render('@whoisediting/no_actions.twig', $options);
-                } else {
-                  return $app['twig']->render('@whoisediting/invalid_token.twig', $options);
-                }
+                return $app['twig']->render('@whoisediting/no_actions.twig', $options);
             }
         }
 
@@ -137,6 +140,7 @@ class WhoIsEditingExtension extends SimpleExtension
             'actions'            => $actions,
             'actionsmetadata'    => $app['whoisediting.service']->getActionsMetaData(),
             'whoiseditingconfig' => $app['whoisediting.config'],
+            'userId'             => $userId,
         ]);
     }
 
