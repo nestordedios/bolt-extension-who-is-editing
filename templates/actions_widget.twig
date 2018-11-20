@@ -27,7 +27,7 @@
     var whoiseditingdata = {
       recordID: '{{ actions|first()['record_id'] }}',
       contenttype: '{{ actions|first()['contenttype'] }}',
-      userID: '{{ user.id }}',
+      userID: '{{ userId }}',
       date: '{{ actions|first()['date']|default() }}',
       whoiseditingTimeInterval: '{{ whoiseditingconfig['timeInterval'] }}',
       url: '{{ path('whoisediting.actions') }}'
