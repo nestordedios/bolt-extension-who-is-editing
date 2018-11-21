@@ -95,15 +95,7 @@ class WhoIsEditingExtension extends SimpleExtension
         $user = $app['users']->getCurrentUser();
         $contenttype = $request->get('contenttypeslug');
 
-        $token = $request->query->get('token');
-        $internal_token = $app['csrf']->getToken('content_edit');
-        if ($token == $internal_token) {
-            $token_valid = true;
-        } else {
-            $token_valid = false;
-        }
-
-        if ($token_valid === false || $user === null) {
+        if ($user === null) {
             $options = [
                 'contenttype'        => $contenttype,
                 'id'                 => $recordId,
